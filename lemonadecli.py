@@ -30,6 +30,21 @@ def build(help="Build the Lemonfile"):
     subprocess.run(["lemoc", "build", "Lemonfile"], check=True)
     typer.echo("Lemonfile built.")
 
+@app.command()
+def check(
+    help: str="Check an lemon file for including errors",
+    file: str = typer.Argument("Lemonfile", help="The Lemonfile to check")):
+    # check if the Lemonfile exists
+    if not os.path.exists(file):
+        typer.echo(f"{file} does not exist.")
+        raise typer.Exit()
+    # check the Lemonfile
+    result = subprocess.run(["lemoc", "check", file], capture_output=True, text=True)
+    if result.returncode == 0:
+        typer.echo("No errors found.")
+    else:
+        typer.echo(result.stderr)
+        raise typer.Exit()
 
 if __name__ == "__main__":
     app()

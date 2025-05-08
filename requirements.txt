@@ -1,0 +1,4 @@
+typer
+cython
+pyinstaller
+setuptools

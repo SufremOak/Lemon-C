@@ -11,5 +11,6 @@ pkgs.mkShell {
   shellHook = ''
     echo "Welcome to the Lemonade development environment!"
     echo "You can use 'lemonadecli.py' for Python-based commands and 'lemoc.zig' for Zig-based commands."
+    source ./.venv/bin/activate
   '';
 }
