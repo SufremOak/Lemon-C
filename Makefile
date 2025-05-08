@@ -9,7 +9,7 @@ all:
 	@echo "Building..."
 	@mkdir -p ./build/bin
 	@mkdir -p ./build/lib
-	$(CXX) -o ./build/bin/lemoncc ./src/lemon.cc $(CFLAGS)
+	g++ -std=c++17 src/lemoncc.cpp -o ./build/bin/lemoncc
 	$(CXX) ./src/Baselang.cpp -o ./build/lib/$(LIBTARGET) $(CYLAGS)
 	@echo "Done."
 
@@ -17,5 +17,11 @@ clean:
 	rm -rf ./build
 	rm -rf ./dist
 	rm *.vsix
+
+install:
+	sudo mkdir -p /usr/include/lemonc
+	sudo cp -r ./src/Baselang.h /usr/include/lemonc/
+	sudo cp -r ./src/lemond.h /usr/include/lemonc/
+	sudo cp -r ./include/Lemon.h /usr/include/lemonc/
 
 .PHONY: all, clean
