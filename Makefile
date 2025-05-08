@@ -3,14 +3,13 @@ CFLAGS := -Wall -Wextra
 TARGET := lemocc
 LIBTARGET := liblemonade.so
 
-checkbuild:
-	@mkdir -p ./build ./dist
-	@echo "Checked and ensured ./build and ./dist directories exist."
-
 all:
-	cython ./lib/lemonpy.pyx
+	python setup.py build
+	@echo "Building..."
+	@mkdir -p ./build/bin
+	@mkdir -p ./build/lib
 	$(CXX) -o ./build/bin/lemoncc ./src/lemon.cc $(CFLAGS)
-	$(CXX) ./src/BaseLang.cc ./dist/lemonpy.c -o ./build/lib/$(LIBTARGET) $(CFLAGS) -I/usr/lib/python3.12
+	$(CXX) ./src/BaseLang.cpp ./dist/lib/lemonpy.c -o ./build/lib/$(LIBTARGET) $(CFLAGS) -I/usr/lib/python3.12
 	@echo "Done."
 
 clean:
@@ -18,4 +17,4 @@ clean:
 	rm -rf ./dist
 	rm *.vsix
 
-.PHONY: all, clean, checkbuild
+.PHONY: all, clean
