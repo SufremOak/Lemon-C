@@ -9,7 +9,7 @@ all:
 	@echo "Building..."
 	@mkdir -p ./build/bin
 	@mkdir -p ./build/lib
-	g++ -std=c++17 src/lemoncc.cpp -o ./build/bin/lemoncc
+	g++ -std=c++17 src/lemon.cc -o ./build/bin/lemoncc
 	$(CXX) ./src/Baselang.cpp -o ./build/lib/$(LIBTARGET) $(CYLAGS)
 	@echo "Done."
 
