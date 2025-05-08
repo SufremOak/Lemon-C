@@ -2,6 +2,7 @@ CXX := g++
 CFLAGS := -Wall -Wextra
 TARGET := lemocc
 LIBTARGET := liblemonade.so
+CYFLAGS := -shared -pthread -fPIC -fwrapv -O2 -Wall -fno-strict-aliasing -I/usr/include/python3.12
 
 all:
 	python setup.py build
@@ -9,7 +10,7 @@ all:
 	@mkdir -p ./build/bin
 	@mkdir -p ./build/lib
 	$(CXX) -o ./build/bin/lemoncc ./src/lemon.cc $(CFLAGS)
-	$(CXX) ./src/BaseLang.cpp ./dist/lib/lemonpy.c -o ./build/lib/$(LIBTARGET) $(CFLAGS) -I/usr/lib/python3.12
+	$(CXX) ./src/Baselang.cpp ./dist/lib/lemonpy.c -o ./build/lib/$(LIBTARGET) $(CYFLAGS)
 	@echo "Done."
 
 clean:
