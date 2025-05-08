@@ -10,7 +10,7 @@ all:
 	@mkdir -p ./build/bin
 	@mkdir -p ./build/lib
 	$(CXX) -o ./build/bin/lemoncc ./src/lemon.cc $(CFLAGS)
-	$(CXX) ./src/Baselang.cpp ./dist/lib/lemonpy.c -o ./build/lib/$(LIBTARGET) $(CYFLAGS)
+	$(CXX) ./src/Baselang.cpp -o ./build/lib/$(LIBTARGET) $(CYLAGS)
 	@echo "Done."
 
 clean:
