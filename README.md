@@ -1,52 +1,74 @@
-# Lemon-C
-The Lemonade Clangd
+# Lemon-C 🍋++
+`C++` but with lemonade!
 
-## Overview
-Lemon-C is a modern C language development environment that combines the power of Clangd with a fresh, user-friendly interface. It aims to make C development more accessible and enjoyable.
+## Common questions
+- A new language?
+    - Nope, just a super-set made with a header file
 
-## Features
-- Integrated Clangd support for intelligent code completion and analysis
-- Modern development environment
-- Cross-platform compatibility
-- Python-based CLI tools for enhanced development workflow
+- Types?? 👀
+    - Yeah, obviously i putted types on Lemon-C
 
-## Prerequisites
-- Python 3.x
-- Clangd (or gcc/g++)
-- Cython
-- Other dependencies listed in `requirements.txt`
+- But is it like Objective-C?
+    - Eww, No!
+
+- How i can `printf` on it?
+    ```cpp
+    Lemon::Io::Log("Simple like this, dummy");
+    ```
+
+- does it have structs and classes?
+    ```cpp
+    // obviosly it has
+    Lemon::Struct(this.name == "mylist") {
+        name: str,
+        age: num,
+        lang: str
+    }
+
+    let Lemon::str<name> == "Johnny";
+    let Lemon::num<age> == "17";
+    let Lemon::str<lang> == "Lemon-C!";
+
+    if (Lemon::Struct::List == 0) do {
+        Lemon::Io::Log(Lemon::DataType::List === <name>mylist());
+        return List;
+    } this.class self {
+        Lemon::If(this.on list::name) {
+            Lemon::Mod::"Log" + ", a good bro!"; // modify a var after it being used!
+            Lemon::Mod::?=Type<NULL>; 
+        }
+    }
+    ``` 
+
+- "But how'd i compile the files without having to put `-I/usr/include/lemonc`?"
+    - Use the `lemoncc` cli, also you won't need to `#include <Lemon.h>` every new Lemon-C file:
+    ```bash
+    $ lemoncc hello.lc -o hii --run-on-compile
+    Johnny, a good bro!
+    17
+    Lemon-C!
+    ``` 
 
 ## Installation
 
-### Using pip
+Its simple, but first:
 ```bash
-pip install -r requirements.txt
-python setup.py build
+$ cargo install just
 ```
 
-### Using make
+and then...
 ```bash
-$ make
-$ sudo make install
+$ git clone https://github.com/sufremoak/lemon-c && cd lemon-c
+$ just && just install
 ```
 
-### Using Nix
-If you have Nix installed, you can use the provided `shell.nix`:
-```bash
-nix-shell
+Done!
+```
+$ lemoncc --version
+Lemon-C Compiler cittra v0.1.1
 ```
 
-## Usage
-See [SRC/README](./src/README.md)
+## Contribuiting
+Any type of contribution is open! just open a pr or a issue, i will do my best to help you.
 
-## Development
-1. Clone the repository
-2. Install dependencies: `pip install -r requirements.txt`
-3. Build the project: `make`
-4. Run tests: `./build/bin/lemoncc main.🍋 -- --test-self`
-
-## Contributing
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-This project is licensed under the MIT license included in the `LICENSE` file.
+<script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="sufremoak" data-color="#FFDD00" data-emoji=""  data-font="Cookie" data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff" ></script>
