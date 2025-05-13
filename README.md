@@ -63,7 +63,7 @@ $ just && just install
 ```
 
 Done!
-```
+```bash
 $ lemoncc --version
 Lemon-C Compiler cittra v0.1.1
 ```
