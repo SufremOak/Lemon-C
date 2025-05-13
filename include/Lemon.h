@@ -212,8 +212,11 @@ namespace Lemon {
             T object;
         };
 
-        std::map<std::string, std::shared_ptr<BaseWrapper>> objects;
+     std::map<std::string, std::shared_ptr<BaseWrapper>> objects;
     };
+
+  #define pub static
+  #define this.r r
 }
 
 #endif // LEMON_H
