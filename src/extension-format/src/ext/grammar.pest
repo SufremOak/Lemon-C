@@ -1,0 +1,18 @@
+// This file defines the grammar rules for the Lemon-C Extension File Format using the Pest syntax.
+// It specifies how the input source code should be structured and parsed.
+
+program = { statement* }
+
+statement = { variable_declaration | function_declaration }
+
+variable_declaration = { "let" ~ identifier ~ ":" ~ type ~ ";" }
+
+function_declaration = { "fn" ~ identifier ~ "(" ~ parameter_list ~ ")" ~ "->" ~ type ~ "{" ~ statement* ~ "}" }
+
+parameter_list = { (parameter ~ ("," ~ parameter)*)? }
+
+parameter = { identifier ~ ":" ~ type }
+
+identifier = @{ ASCII_ALPHA ~ (ASCII_ALPHA | ASCII_DIGIT | "_")* }
+
+type = { "int" | "float" | "string" | "bool" }

@@ -1,262 +1,222 @@
-#ifndef LEMON_C_H
-#define LEMON_C_H
+#ifndef LEMON_H
+#define LEMON_H
 
 #include <iostream>
 #include <string>
 #include <vector>
-#include <sstream>
-#include <cmath>
-#include <algorithm>
 #include <map>
-#include <memory> // For smart pointers
-
-// Lemon-C:  "Flavor" of C++ with a more eye-friendly syntax
+#include <set>
+#include <algorithm>
+#include <utility>
+#include <cmath>
+#include <limits>
+#include <cassert>
+#include <memory>
 
 namespace Lemon {
+    // Constants
+    const double PI = 3.14159265358979323846;
+    const double EPSILON = 1e-9;
+    const double INF = std::numeric_limits<double>::infinity();
 
-    // 1. Basic Output (Lemon-C's "Log")
-    void Log(const std::string& text) {
-        std::cout << text << std::endl;
-    }
+    // Type definitions
+    using Point = std::pair<double, double>;
+    using Line = std::pair<Point, Point>;
+    using Polygon = std::vector<Point>;
 
-    // 2. String Concatenation (Lemon-C's "+" for strings)
-    std::string concat(const std::string& str1, const std::string& str2) {
-        return str1 + str2;
-    }
+    // Function declarations
+    double distance(const Point& a, const Point& b);
+    double cross(const Point& a, const Point& b);
+    bool isPointInPolygon(const Point& p, const Polygon& poly);
 
-    // 3. Simple Math Function (Lemon-C's "pow")
-    double pow(double base, double exponent) {
-        return std::pow(base, exponent);
-    }
-
-    // 4.  Data Structures
-    template <typename T>
-    using vector = std::vector<T>;
-
-    template <typename K, typename V>
-    using map = std::map<K, V>;
-
-    // 5.  Control Flow (Macros for a different look)
-    #define for_(variable, start_value, end_value) \
-        for (int variable = start_value; variable < end_value; ++variable)
-
-    #define while_(condition) \
-        while (condition)
-
-    // 6. Function definition
-    #define func(return_type, name, args) \
-        return_type name args
-
-    // 7.  Absolute value
-    double abs(double x) {
-        return std::abs(x);
-    }
-
-    // 8. Find max of two numbers
-    double max(double a, double b) {
-        return std::max(a, b);
-    }
-
-    // 9. Find min of two numbers.
-    double min(double a, double b) {
-        return std::min(a, b);
-    }
-    // 10. Check if a string contains a substring.
-    bool contains(const std::string& str, const std::string& sub) {
-        return str.find(sub) != std::string::npos;
-    }
-
-    // 11. Split a string by a delimiter.
-    std::vector<std::string> split(const std::string& str, const char delimiter) {
-        std::vector<std::string> tokens;
-        std::string token;
-        std::istringstream tokenStream(str);
-        while (std::getline(tokenStream, token, delimiter)) {
-            tokens.push_back(token);
+    namespace Io {
+        void Log(const std::string& message) {
+            std::cout << message << std::endl;
         }
-        return tokens;
+
+        void Error(const std::string& message) {
+            std::cerr << "Error: " << message << std::endl;
+        }
+        void Warning(const std::string& message) {
+            std::cerr << "Warning: " << message << std::endl;
+        }
+
+        struct expr {
+            std::string str;
+            expr(const std::string& s) : str(s) {}
+            friend std::ostream& operator<<(std::ostream& os, const expr& e) {
+                os << e.str;
+                return os;
+            };
+        };
     }
 
-    // 12.  Trim whitespace from both ends of a string
-    std::string trim(const std::string& str) {
-        size_t first = str.find_first_not_of(" \t\n\r");
-        if (std::string::npos == first) {
-            return "";
+    namespace Math {
+        double gcd(double a, double b) {
+            while (b != 0) {
+                double t = b;
+                b = std::fmod(a, b);
+                a = t;
+            }
+            return a;
         }
-        size_t last = str.find_last_not_of(" \t\n\r");
-        return str.substr(first, (last - first + 1));
+
+        double lcm(double a, double b) {
+            return (a * b) / gcd(a, b);
+        };
     }
+    namespace Geometry {
+        double distance(const Point& a, const Point& b) {
+            return std::sqrt(std::pow(a.first - b.first, 2) + std::pow(a.second - b.second, 2));
+        }
 
-    // 13. String to int
-    int string_to_int(const std::string& str) {
-        try {
-            return std::stoi(str);
-        } catch (const std::invalid_argument& e) {
-            return 0;
+        double cross(const Point& a, const Point& b) {
+            return a.first * b.second - a.second * b.first;
         }
-    }
 
-    // 14.  Basic Type System
-    class object {
-    public:
-        virtual ~object() {}
-        virtual void print() const {
-            Log("Base Object");
-        }
-        virtual std::string type_name() const {
-            return "object";
-        }
-        virtual std::shared_ptr<object> add(const std::shared_ptr<object>& other) const {
-            return nullptr;
-        }
-    };
-
-    class string_obj : public object {
-    public:
-        std::string value;
-        string_obj(const std::string& val) : value(val) {}
-        void print() const override {
-            Log(value);
-        }
-        std::string type_name() const override {
-            return "string";
-        }
-        std::shared_ptr<object> add(const std::shared_ptr<object>& other) const override {
-            if (other->type_name() == "string") {
-                std::shared_ptr<string_obj> other_str = std::dynamic_pointer_cast<string_obj>(other);
-                if (other_str) {
-                    return std::make_shared<string_obj>(this->value + other_str->value);
+        bool isPointInPolygon(const Point& p, const Polygon& poly) {
+            int n = poly.size();
+            bool inside = false;
+            for (int i = 0, j = n - 1; i < n; j = i++) {
+                if ((poly[i].second > p.second) != (poly[j].second > p.second) &&
+                    (p.first < (poly[j].first - poly[i].first) * (p.second - poly[i].second) / (poly[j].second - poly[i].second) + poly[i].first)) {
+                    inside = !inside;
                 }
             }
-            return nullptr;
+            return inside;
         }
-    };
+    }
+    namespace Debug {
+        void assertCondition(bool condition, const std::string& message) {
+            if (!condition) {
+                Io::Error(message);
+                assert(condition);
+            }
+        }
 
-    class number_obj : public object {
-    public:
-        double value;
-        number_obj(double val) : value(val) {}
-        void print() const override {
-            Log(std::to_string(value));
+        void assertEqual(double a, double b, const std::string& message) {
+            if (std::abs(a - b) > EPSILON) {
+                Io::Error(message);
+                assert(false);
+            }
         }
-        std::string type_name() const override {
-            return "number";
+    }
+    namespace Utils {
+        std::string toString(double value) {
+            return std::to_string(value);
         }
-        std::shared_ptr<object> add(const std::shared_ptr<object>& other) const override {
-            if (other->type_name() == "number") {
-                std::shared_ptr<number_obj> other_num = std::dynamic_pointer_cast<number_obj>(other);
-                if (other_num) {
-                    return std::make_shared<number_obj>(this->value + other_num->value);
+
+        std::string toString(int value) {
+            return std::to_string(value);
+        }
+
+        std::string toString(const Point& p) {
+            return "(" + toString(p.first) + ", " + toString(p.second) + ")";
+        }
+
+        std::string toString(const Polygon& poly) {
+            std::string result = "[";
+            for (const auto& p : poly) {
+                result += toString(p) + ", ";
+            }
+            result += "]";
+            return result;
+        }
+    }
+    namespace Algorithms {
+        // Example algorithm: Convex Hull (Graham's scan)
+        Polygon convexHull(const Polygon& points) {
+            // Sort points lexicographically
+            Polygon sortedPoints = points;
+            std::sort(sortedPoints.begin(), sortedPoints.end(), [](const Point& a, const Point& b) {
+                return a.first < b.first || (a.first == b.first && a.second < b.second);
+            });
+
+            // Build lower hull
+            Polygon lower;
+            for (const auto& p : sortedPoints) {
+                while (lower.size() >= 2 && Geometry::cross(lower[lower.size() - 1], lower[lower.size() - 2]) <= 0) {
+                    lower.pop_back();
+                }
+                lower.push_back(p);
+            }
+
+            // Build upper hull
+            Polygon upper;
+            for (int i = sortedPoints.size() - 1; i >= 0; --i) {
+                const auto& p = sortedPoints[i];
+                while (upper.size() >= 2 && Geometry::cross(upper[upper.size() - 1], upper[upper.size() - 2]) <= 0) {
+                    upper.pop_back();
+                }
+                upper.push_back(p);
+            }
+
+            // Remove the last point of each half because it's repeated at the beginning of the other half
+            lower.pop_back();
+            upper.pop_back();
+
+            // Concatenate lower and upper hull to get the full hull
+            lower.insert(lower.end(), upper.begin(), upper.end());
+            return lower;
+        }
+    }
+
+    #define LEMON_ASSERT(condition, message) \
+        Lemon::Debug::assertCondition(condition, message)
+    #define LEMON_ASSERT_EQUAL(a, b, message) \
+        Lemon::Debug::assertEqual(a, b, message)
+    #define LEMON_LOG(message) \
+        Lemon::Io::Log(message)
+    #define LEMON_ERROR(message) \
+        Lemon::Io::Error(message)
+    #define LEMON_WARNING(message) \
+        Lemon::Io::Warning(message)
+    #define LEMON_EXPR(expr) \
+        Lemon::Io::expr(expr)
+
+    #define func(r) void(r)
+    #define struct(r) struct r
+    #define type (r) using r
+
+    typedef struct Typing {
+        int a;
+        double b;
+    } Typing;
+
+    class ObjectSystem {
+        template <typename T>
+        void addObject(const std::string& name, const T& object) {
+            objects[name] = std::make_shared<Wrapper<T>>(object);
+        }
+
+        template <typename T>
+        T getObject(const std::string& name) const {
+            auto it = objects.find(name);
+            if (it != objects.end()) {
+                auto wrapper = std::dynamic_pointer_cast<Wrapper<T>>(it->second);
+                if (wrapper) {
+                    return wrapper->object;
                 }
             }
-            return nullptr;
+            throw std::runtime_error("Object not found or type mismatch");
         }
-    };
 
-    // 15. Object Creation
-    std::shared_ptr<object> create_object(const std::string& type, const std::string& value) {
-        if (type == "string") {
-            return std::make_shared<string_obj>(value);
-        } else if (type == "number") {
-            try {
-                double num_value = std::stod(value);
-                return std::make_shared<number_obj>(num_value);
-            } catch (const std::invalid_argument& e) {
-                return nullptr;
-            }
-        }
-        return nullptr;
-    }
-    std::shared_ptr<object> create_object(const std::string& type, double value) {
-        if (type == "number") {
-            return std::make_shared<number_obj>(value);
-        }
-        return nullptr;
-    }
-
-    // 16. Class Definitions (using macros for a different look)
-    #define class_(name) \
-    class name : public Lemon::object { \
-    public:
-
-    #define private_ 멤버: \
     private:
+        struct BaseWrapper {
+            virtual ~BaseWrapper() = default;
+        };
 
-    #define public_ 멤버: \
-    public:
+        template <typename T>
+        struct Wrapper : BaseWrapper {
+            Wrapper(const T& obj) : object(obj) {}
+            T object;
+        };
 
-    #define constructor_(args) \
-        name(args) :
-
-    #define method_(definition) \
-        definition override
-
-    // 17. Interface Support (using abstract classes)
-    class interface_serializable {
-    public:
-        virtual ~interface_serializable() {}
-        virtual std::string serialize() const = 0;
+     std::map<std::string, std::shared_ptr<BaseWrapper>> objects;
     };
 
-    class interface_cloneable {
-    public:
-        virtual ~interface_cloneable() {}
-        virtual std::shared_ptr<object> clone() const = 0;
-    };
+  #define pub static
+  #define this.r r
+}
 
-    // 18. Implementing Interfaces
-    class person : public object, public interface_serializable, public interface_cloneable {
-    public:
-        std::string name;
-        int age;
-
-        constructor_(const std::string& name, int age)  // constructor
-            name(name), age(age) {}
-
-        method_(void print() const)  // method
-        {
-            Log("Person: " + name + ", Age: " + std::to_string(age));
-        }
-        std::string type_name() const override {
-            return "person";
-        }
-
-        std::string serialize() const override {
-            return "Person { name: " + name + ", age: " + std::to_string(age) + " }";
-        }
-
-        std::shared_ptr<object> clone() const override {
-            return std::make_shared<person>(name, age);
-        }
-    };
-
-    class circle : public object, public interface_cloneable {
-    public:
-        double radius;
-        constructor_(double radius)
-            radius(radius) {}
-        method_(void print() const) {
-            Log("Circle with radius: " + std::to_string(radius));
-        }
-        std::string type_name() const override {
-            return "circle";
-        }
-
-        double get_area() const {
-            return M_PI * radius * radius;
-        }
-        std::shared_ptr<object> clone() const override {
-            return std::make_shared<circle>(radius);
-        }
-    };
-
-    // 19. Object Creation
-    std::shared_ptr<person> create_person(const std::string& name, int age) {
-        return std::make_shared<person>(name, age);
-    }
-
-    std::shared_ptr<circle> create_circle(double radius) {
-        return std::make_shared<circle>(radius);
-    }
-}}
-#endif // LEMON_C_H
+#endif // LEMON_H
