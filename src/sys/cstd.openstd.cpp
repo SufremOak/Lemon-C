@@ -7,13 +7,13 @@ Lemon::Mod::IntLib(
     this.entry == LibInit();
     this.isStd? == false;
     );
-pub void CStandardLibrary() {
+public void CStandardLibrary() {
   void LibInit() {
     //
   }
 }
 
-main() {
+public void main() {
   Lemon::Mod::Export(this.lib);
   return Lib;
 }
